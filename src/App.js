@@ -1,24 +1,42 @@
-import logo from './logo.svg';
-import './App.css';
+import "./App.css";
+import axios from "axios";
+import { useEffect, useReducer } from "react";
+import { cartReducer } from "./reducers/cartReducer";
+import Products from "./component/Products";
+import Cart from "./component/Cart";
 
 function App() {
+  const [state, dispatch] = useReducer(cartReducer, {
+    products: [],
+    cart: [],
+  });
+  const fetchProducts = async () => {
+    const { data } = await axios.get("https://fakestoreapi.com/products");
+    dispatch({
+      type: "ADD_PRODUCTS",
+      payload: data,
+    });
+  };
+  console.log(state);
+  useEffect(() => {
+    fetchProducts();
+  }, []);
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-around",
+          width: "80%",
+        }}
+      >
+        <h1>Products</h1>
+      </div>
+      <div style={{ display: "flex" }}>
+        <Products state={state} dispatch={dispatch} />
+        <Cart state={state} dispatch={dispatch} />
+      </div>
+    </>
   );
 }
 
